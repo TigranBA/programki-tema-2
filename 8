@@ -1,0 +1,38 @@
+def bisection_method(a, b, tol=1e-6, max_iter=100):
+    for _ in range(max_iter):
+        c = (a + b) / 2
+        f_c = c**2 - c - 1
+        if abs(f_c) < tol:
+            return c
+        elif (a**2 - a - 1) * f_c < 0:
+            b = c
+        else:
+            a = c
+    return c
+
+root = bisection_method(1, 2)
+print(f"Корень уравнения методом дихотомии: {root:.6f}")
+
+
+
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+double bisection_method(double a, double b, double tol = 1e-6, int max_iter = 100) {
+    for (int i = 0; i < max_iter; ++i) {
+        double c = (a + b) / 2;
+        double f_c = c*c - c - 1;
+        if (fabs(f_c) < tol) return c;
+        if ((pow(a, 2) - a - 1) * f_c < 0) b = c;
+        else a = c;
+    }
+    return (a + b) / 2;
+}
+
+int main() {
+    double root = bisection_method(1, 2);
+    cout << "Корень уравнения методом дихотомии: " << root << endl;
+    return 0;
+}
