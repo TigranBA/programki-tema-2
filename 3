@@ -1,0 +1,37 @@
+import math
+
+def iteration_method(x0, tol=1e-6, max_iter=100):
+    x = x0
+    for _ in range(max_iter):
+        new_x = math.sqrt(5 + x)
+        if abs(new_x - x) < tol:
+            return new_x
+        x = new_x
+    return x
+
+x0 = 2.0  # Начальное приближение
+root = iteration_method(x0)
+print(f"Корень уравнения методом итераций: {root:.6f}")
+
+
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+double iteration_method(double x0, double tol = 1e-6, int max_iter = 100) {
+    double x = x0;
+    for (int i = 0; i < max_iter; ++i) {
+        double new_x = sqrt(5 + x);
+        if (fabs(new_x - x) < tol) return new_x;
+        x = new_x;
+    }
+    return x;
+}
+
+int main() {
+    double x0 = 2.0;
+    double root = iteration_method(x0);
+    cout << "Корень уравнения методом итераций: " << root << endl;
+    return 0;
+}
