@@ -1,0 +1,67 @@
+import math
+
+def newton_method(V, T, tol=1e-6, max_iter=100):
+    g = 9.81
+    sin_alpha = g * T / (2 * V)
+    
+    if abs(sin_alpha) > 1:
+        return "Ошибка: угол вне допустимого диапазона"
+
+    alpha = 0.5  # Начальное приближение в радианах
+    for _ in range(max_iter):
+        f = math.sin(alpha) - sin_alpha
+        df = math.cos(alpha)
+        new_alpha = alpha - f / df
+        if abs(new_alpha - alpha) < tol:
+            break
+        alpha = new_alpha
+    return math.degrees(alpha)
+
+V = float(input("Введите V (м/с): "))
+T = float(input("Введите T (с): "))
+
+alpha = newton_method(V, T)
+print(f"Найденный угол методом Ньютона: {alpha:.6f} градусов")
+
+
+
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+double newton_method(double V, double T, double tol = 1e-6, int max_iter = 100) {
+    const double g = 9.81;
+    double sin_alpha = g * T / (2 * V);
+
+    if (abs(sin_alpha) > 1) {
+        cout << "Ошибка: угол вне допустимого диапазона" << endl;
+        return -1;
+    }
+
+    double alpha = 0.5; // Начальное приближение (в радианах)
+    for (int i = 0; i < max_iter; ++i) {
+        double f = sin(alpha) - sin_alpha;
+        double df = cos(alpha);
+        double new_alpha = alpha - f / df;
+        if (fabs(new_alpha - alpha) < tol) {
+            break;
+        }
+        alpha = new_alpha;
+    }
+    return alpha * 180.0 / M_PI;
+}
+
+int main() {
+    double V, T;
+    cout << "Введите V (м/с): ";
+    cin >> V;
+    cout << "Введите T (с): ";
+    cin >> T;
+
+    double alpha = newton_method(V, T);
+    if (alpha != -1)
+        cout << "Найденный угол методом Ньютона: " << alpha << " градусов" << endl;
+
+    return 0;
+}
