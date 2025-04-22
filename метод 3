@@ -1,54 +1,68 @@
-#include <iostream>
-#include <cmath>
-#include <limits> // для numeric_limits
-using namespace std;
-// Определяем функцию, корень которой нужно найти
+#include <iostream>  
+#include <cmath>     
+#include <limits>   
+
+
+
 double example_function(double x) {
-  return x*x*x - 0.2*x*x + 0.5*x - 1;
+    return x * x * x - 0.2 * x * x + 0.5 * x - 1;
 }
 
-double chord_method(double a, double b, double epsilon, int max_iter) {
-  int iteration = 0;
-  double x;
 
-  if (example_function(a) * example_function(b) >= 0) {
-    return numeric_limits<double>::quiet_NaN(); //нет корня в данном отрезке
-  }
-
-  for (int i = 0; i < max_iter; ++i) {
-    x = b - (b - a) * example_function(b) / (example_function(b) - example_function(a));
-    iteration++;
-
-    if (abs(example_function(x)) < epsilon) {
-      break;
-    }
-    if (example_function(x) > 0) {
-      b = x;
-    } else {
-      a = x;
+/
+double chord_method(double (*f)(double), double a, double b, double eps, int max_iter) {
+   
+    
+    if (f(a) * f(b) >= 0) {
+        std::cerr << "Ошибка: f(a) и f(b) должны иметь разные знаки." << std::endl;
+        return std::numeric_limits<double>::quiet_NaN(); // Возвращаем NaN, чтобы указать на ошибку
     }
 
-  }
-  return x;
+    int iteration = 0; // Счетчик итераций.
+    double x;           // Переменная для хранения приближения корня.
+
+    // Основной цикл метода хорд.  Выполняется до max_iter раз.
+    for (int i = 0; i < max_iter; ++i) {
+       
+        x = a - (b - a) * f(a) / (f(b) - f(a));
+
+        // Проверяем условие сходимости: если абсолютное значение функции в точке x меньше заданной точности eps, то корень найден.
+        if (std::abs(f(x)) < eps) {
+            std::cout << "Количество итераций: " << iteration + 1 << std::endl;
+            return x; // Возвращаем найденный корень.
+        }
+
+        // Обновляем границы интервала a и b для следующей итерации.
+        // Если корень лежит в интервале [a, x], то новая граница b = x.
+        // Иначе корень лежит в интервале [x, b], и новая граница a = x.
+        if (f(a) * f(x) < 0) {
+            b = x;
+        } else {
+            a = x;
+        }
+        iteration++; // Увеличиваем счетчик итераций.
+    }
+
+    // Если метод не сошелся за max_iter итераций, выводим сообщение об ошибке и возвращаем NaN.
+    std::cerr << "Ошибка: Метод не сошелся за указанное количество итераций." << std::endl;
+    return std::numeric_limits<double>::quiet_NaN(); // Возвращаем NaN, чтобы указать на ошибку
 }
 
 int main() {
-  double a = 0, b = 2, epsilon = 1e-6; // Левый и правый края отрезка, точность
-  int max_iter = 1000;
+    double a = 0;         // Левая граница интервала.
+    double b = 3;         // Правая граница интервала.
+    double epsilon = 1e-6; // Точность
+    int max_iter = 1000;  // Максимальное количество итераций.
 
-  double root = chord_method(a, b, epsilon, max_iter);
+    // поиска корня.
+    double root = chord_method(example_function, a, b, epsilon, max_iter);
 
+    // Проверяем, что root является числом, а не NaN.
+    if (!std::isnan(root)) { 
+        std::cout << "Корень уравнения: " << root << std::endl;
+        std::cout << "Значение функции в корне: " << example_function(root) << std::endl;
+    }
 
-  if (isnan(root)) {
-    cout << "Корень не найден на заданном интервале." << endl;
-  } else {
-    cout << fixed << setprecision(10);
-    cout << "Значение корня: " << root << endl;
-    cout << "Значение функции: " << example_function(root) << endl;
-    cout << "Количество итераций: " <<  max_iter << endl;
-
-  }
-
-
-  return 0;
+    return 0;
 }
+
