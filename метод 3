@@ -1,0 +1,54 @@
+#include <iostream>
+#include <cmath>
+#include <limits> // для numeric_limits
+using namespace std;
+// Определяем функцию, корень которой нужно найти
+double example_function(double x) {
+  return x*x*x - 0.2*x*x + 0.5*x - 1;
+}
+
+double chord_method(double a, double b, double epsilon, int max_iter) {
+  int iteration = 0;
+  double x;
+
+  if (example_function(a) * example_function(b) >= 0) {
+    return numeric_limits<double>::quiet_NaN(); //нет корня в данном отрезке
+  }
+
+  for (int i = 0; i < max_iter; ++i) {
+    x = b - (b - a) * example_function(b) / (example_function(b) - example_function(a));
+    iteration++;
+
+    if (abs(example_function(x)) < epsilon) {
+      break;
+    }
+    if (example_function(x) > 0) {
+      b = x;
+    } else {
+      a = x;
+    }
+
+  }
+  return x;
+}
+
+int main() {
+  double a = 0, b = 2, epsilon = 1e-6; // Левый и правый края отрезка, точность
+  int max_iter = 1000;
+
+  double root = chord_method(a, b, epsilon, max_iter);
+
+
+  if (isnan(root)) {
+    cout << "Корень не найден на заданном интервале." << endl;
+  } else {
+    cout << fixed << setprecision(10);
+    cout << "Значение корня: " << root << endl;
+    cout << "Значение функции: " << example_function(root) << endl;
+    cout << "Количество итераций: " <<  max_iter << endl;
+
+  }
+
+
+  return 0;
+}
